@@ -12,6 +12,7 @@ http.createServer(function (req, res) {
                    size:{$sum:1}
                }
            }, 
+           {$match: { size: { $gt: 2 } }},
            {$sort:{size:-1}}
        ];
    
