@@ -10,7 +10,6 @@
   "author": "",
   "license": "GPL2",
   "dependencies": {
-    "mongojs": "~0.14.1",
-    "jquery": "~2.1.1"
+    "mongojs": "~0.14.1"
   }
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Padrões 404 - Techtudo</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  </head>
+  <body>
+    <h1>Techtudo</h1>
+    <% for (var i=0; i<content.length; i++) { %>
+        <div class="pattern-box">
+            <div>
+                <div class="quantity"><%=content[i].entries.length %></div> 
+                <div class="pattern">
+                    <h2 onclick="$('#urls_<%= i %>').slideToggle('slow')"><%=content[i]._id %></h2>
+                    <ul class="urls" id="urls_<%= i %>">
+                    <% for (var j=0; j<content[i].entries.length; j++){ %>
+                       <li class="<%=(j%2)==0?'odd':'even' %>"><%=content[i].entries[j].request %></li>
+                    <% } %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    <% } %>
+  </body>
+</html>
