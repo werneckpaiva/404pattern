@@ -9,9 +9,21 @@ import org.apache.hadoop.io.WritableComparable;
 
 public class UrlRequest implements Writable, WritableComparable<UrlRequest>, Cloneable{
 
+
     private String request;
     private String logEntry;
     private Integer code;
+
+    public UrlRequest() {
+
+    }
+
+    public UrlRequest(String request, String logEntry, Integer code) {
+        super();
+        this.request = request;
+        this.logEntry = logEntry;
+        this.code = code;
+    }
 
     public String getRequest() {
         return request;
@@ -63,6 +75,31 @@ public class UrlRequest implements Writable, WritableComparable<UrlRequest>, Clo
         } catch (NumberFormatException e) { }
         urlRequest.setRequest(parts[7]);
         return urlRequest;
+    }
+
+    public String[] getUrlParts(){
+        return request.split("/");
+    }
+    
+    @Override
+    public String toString(){
+        return request;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        UrlRequest urlRequest = (UrlRequest) obj; 
+        return (this.compareTo(urlRequest) == 0);
+    }
+
+    @Override
+    public int hashCode(){
+        return request.hashCode();
+    }
+
+    @Override
+    public Object clone() {
+       return new UrlRequest(request, logEntry, code);
     }
 
 }

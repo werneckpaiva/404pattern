@@ -1,36 +1,37 @@
 package com.globo.error404.reduce;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.globo.error404.type.UrlPart;
 import com.globo.error404.type.UrlRequest;
 
-public class URLPatternsReducer extends Reducer<Text, UrlRequest, Text, Text> {
+public class URLPatternsReducer extends Reducer<UrlPart, UrlRequest, UrlRequest, UrlPart> {
 
     protected static Logger _log = LoggerFactory.getLogger(URLPatternsReducer.class);
 
-    public void reduce(Text key, Iterable<UrlRequest> values, Context context) throws IOException, InterruptedException {
+    public void reduce(UrlPart key, Iterable<UrlRequest> values, Context context) throws IOException, InterruptedException {
 
-        Map<String, UrlRequest> map = new HashMap<String, UrlRequest>();
-        Long count = 0L;
-        for (UrlRequest value : values) {
-            map.put(value.getRequest(), value);
-            count++;
+        Set<UrlRequest> urlsSet = new HashSet<UrlRequest>();
+        for (UrlRequest urlRequest : values) {
+            urlsSet.add((UrlRequest)urlRequest.clone());
         }
-        if (map.size() <= 1) return;
-//        if (key.toString().equals("windows-phone.json")){
-//            for (String request : map.keySet()){
-//                _log.debug("{}", request);
+
+        if (urlsSet.size() <= 1) return;
+
+        for (UrlRequest urlRequest : urlsSet){
+//            if (urlRequest.getRequest().equals("/jogos/noticia/2012/08/blockbusters-para-bombar-seu-console-por-menos-de-r-60")){
+//                _log.info(key.toString());
 //            }
-//        }
-        for (String request : map.keySet()){
-            context.write(new Text(request), key);
+//            if (key.getPart().equals("artigos")){
+//                _log.info(urlRequest.toString());
+//            }
+            context.write(urlRequest, key);
         }
     }
 

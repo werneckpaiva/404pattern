@@ -8,9 +8,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.globo.error404.type.UrlPart;
 import com.globo.error404.type.UrlRequest;
 
-public class Filter404Mapper extends Mapper<LongWritable, Text, Text, UrlRequest> {
+public class Filter404Mapper extends Mapper<LongWritable, Text, UrlPart, UrlRequest> {
 
     protected static Logger _log = LoggerFactory.getLogger(Filter404Mapper.class);
 
@@ -24,11 +25,12 @@ public class Filter404Mapper extends Mapper<LongWritable, Text, Text, UrlRequest
         if (urlRequest.getCode() == null || !urlRequest.getCode().equals(404)){
             return;
         }
-        String[] parts = urlRequest.getRequest().split("/");
-        Text keyPart;
-        for (String part : parts){
+        String[] parts = urlRequest.getUrlParts();
+        UrlPart keyPart;
+        for (Integer i=0; i<parts.length; i++){
+            String part = parts[i];
             if (part.length() == 0) continue;
-            keyPart = new Text(part);
+            keyPart = new UrlPart(i, part);
             context.write(keyPart, urlRequest);
         }
     }
