@@ -22,8 +22,12 @@ import com.globo.error404.reduce.URLPatternsReducer;
 import com.globo.error404.reduce.URLPatternsReducer2;
 import com.globo.error404.type.UrlPart;
 import com.globo.error404.type.UrlRequest;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.util.JSON;
 
 public class PatternDiscoveryApp {
 
@@ -133,7 +137,8 @@ public class PatternDiscoveryApp {
 
 
         MongoClient mongoClient = new MongoClient( "localhost" );
-        DB db = mongoClient.getDB( "techtudo" );
+        DB db = mongoClient.getDB( "mysite" );
+        DBCollection coll = db.getCollection("pattern404");
 
         // For each file
         for (FileStatus status : fss) {
@@ -146,6 +151,19 @@ public class PatternDiscoveryApp {
             Text pattern = new Text();
             UrlRequest request = new UrlRequest();
             while (reader.next(pattern, request)) {
+
+                BasicDBObject key = new BasicDBObject("pattern", pattern.toString());
+
+                StringBuffer sb = new StringBuffer();
+                sb.append("{$push: {")
+                  .append("    entries: {")
+                  .append("       request:\"").append(request.getRequest()).append("\", ")
+                  .append("       log: \"").append(request.getLogEntry()).append("\"")
+                  .append("    }")
+                  .append("  }")
+                  .append("}");
+
+                coll.update(key, (DBObject) JSON.parse(sb.toString()), true, false);
                 _log.debug("{}", pattern);
             }
             reader.close();
