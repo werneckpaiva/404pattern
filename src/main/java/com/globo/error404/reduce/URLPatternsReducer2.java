@@ -26,7 +26,7 @@ public class URLPatternsReducer2 extends Reducer<UrlRequest, UrlPart, Text, UrlR
         String[] urlParts = key.getUrlParts();
         for (int i=0; i<urlParts.length; i++){
             if (urlParts[i].equals("")) continue;
-            if (!fixedParts.containsKey(i)){
+            if (!urlParts[i].equals("") && !fixedParts.containsKey(i)){
                 urlParts[i]="*";
             }
         }

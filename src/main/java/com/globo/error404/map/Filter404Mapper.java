@@ -1,6 +1,7 @@
 package com.globo.error404.map;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -30,6 +31,8 @@ public class Filter404Mapper extends Mapper<LongWritable, Text, UrlPart, UrlRequ
         for (Integer i=0; i<parts.length; i++){
             String part = parts[i];
             if (part.length() == 0) continue;
+            if (part.matches("^[0-9]+$")) continue;
+            if (part.matches("^[0-9]+\\.html$")) continue;
             keyPart = new UrlPart(i, part);
             context.write(keyPart, urlRequest);
         }

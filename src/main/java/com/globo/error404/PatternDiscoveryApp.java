@@ -164,7 +164,7 @@ public class PatternDiscoveryApp {
                   .append("}");
 
                 coll.update(key, (DBObject) JSON.parse(sb.toString()), true, false);
-                _log.debug("{}", pattern);
+//                _log.debug("{}", pattern);
             }
             reader.close();
         }

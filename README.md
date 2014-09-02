@@ -27,7 +27,7 @@ Running
 hadoop jar target/error404-pattern-discovery-0.0.1-SNAPSHOT-job.jar <data/input/> <data/output/>
 ```
 
-*Mongo*
+# Mongo
 ```
 db.pattern404.remove({})
 db.pattern404.find({})
@@ -35,3 +35,8 @@ db.pattern404.find({}, {pattern: 1})
 ```
 
 
+# node
+```
+npm install
+node server.js
+``` 
