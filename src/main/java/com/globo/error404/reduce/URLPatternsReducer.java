@@ -1,8 +1,8 @@
 package com.globo.error404.reduce;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.mapreduce.Reducer;
 import org.slf4j.Logger;
@@ -17,20 +17,32 @@ public class URLPatternsReducer extends Reducer<UrlPart, UrlRequest, UrlRequest,
 
     public void reduce(UrlPart key, Iterable<UrlRequest> values, Context context) throws IOException, InterruptedException {
 
-        Set<UrlRequest> urlsSet = new HashSet<UrlRequest>();
+        Boolean hasDifferentURLs = false;
+        String firstNormalizedUrl = values.iterator().next().getNormalizedRequest();
+        List<UrlRequest> urlRequestList = new ArrayList<UrlRequest>();
         for (UrlRequest urlRequest : values) {
-            urlsSet.add((UrlRequest)urlRequest.clone());
+            urlRequestList.add((UrlRequest) urlRequest.clone());
+            String normalizedUrl = urlRequest.getNormalizedRequest();
+            if (!hasDifferentURLs && !normalizedUrl.equals(firstNormalizedUrl)){
+                hasDifferentURLs = true;
+            }
         }
-
-        if (urlsSet.size() <= 1) return;
-
-        for (UrlRequest urlRequest : urlsSet){
-//            if (urlRequest.getRequest().equals("/jogos/noticia/2012/08/blockbusters-para-bombar-seu-console-por-menos-de-r-60")){
-//                _log.info(key.toString());
-//            }
-//            if (key.getPart().equals("artigos")){
-//                _log.info(urlRequest.toString());
-//            }
+        StringBuffer sb = new StringBuffer();
+        for (UrlRequest urlRequest : urlRequestList){
+            sb.append("[");
+            sb.append(urlRequest.getRequest());
+            sb.append("] ");
+            sb.append(urlRequest.getNormalizedRequest());
+            sb.append(", ");
+        }
+        if (!hasDifferentURLs) {
+//            _log.debug("{} - count: {}", key, urlRequestList.size());
+            if (sb.toString().indexOf("plantao") >=0 && urlRequestList.size() > 1) _log.debug("{} - {}", key, sb.toString());
+            return;
+        }
+        
+        for (UrlRequest urlRequest : urlRequestList){
+//            _log.debug("{} - ***** {}", key, urlRequest);
             context.write(urlRequest, key);
         }
     }

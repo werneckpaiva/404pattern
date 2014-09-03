@@ -97,6 +97,12 @@ public class UrlRequest implements Writable, WritableComparable<UrlRequest>, Clo
         return request.hashCode();
     }
 
+    public String getNormalizedRequest(){
+        String normalizedUrl = request.replaceAll("/[0-9]+[/\\.]", "");
+        return normalizedUrl;
+    }
+
+    
     @Override
     public Object clone() {
        return new UrlRequest(request, logEntry, code);
